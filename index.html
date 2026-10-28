@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Merge Fruit</title>
+
+  <!-- Bubbly fonts (optional: if you are offline the game falls back to rounded system fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-state="HOME">
+<div id="app">
+
+  <!-- ===================== HOME SCREEN ===================== -->
+  <section id="screen-home" class="screen active" aria-label="Home">
+    <div class="bg" id="bg-home"></div>
+
+    <div class="home-stage">
+      <h1 class="title" id="title" aria-label="Merge Fruit"></h1>
+
+      <div class="h-sub" id="h-sub">HALLOWEEN EDITION</div>
+      <div id="home-fruits"></div>
+
+      <!-- PLAY button -->
+      <button id="btn-play" class="wood-btn play-btn" type="button">PLAY</button>
+
+      <div class="tagline">COLLECT &amp; DISCOVER ALL FRUITS!</div>
+    </div>
+
+    <div class="corner-row">
+      <button id="btn-gear" class="icon-btn gear" type="button" aria-label="Settings" title="Settings">&#9881;&#65039;</button>
+      <button class="icon-btn" type="button" data-sound-toggle aria-label="Toggle sound">&#128266;</button>
+    </div>
+  </section>
+
+  <!-- ===================== GAME SCREEN ===================== -->
+  <section id="screen-game" class="screen" aria-label="Game">
+    <div class="bg" id="bg-game"></div>
+
+    <header class="hud">
+      <div class="stat"><span class="stat-label">SCORE</span><span id="score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">BEST</span><span id="best" class="stat-value">0</span></div>
+      <div class="stat next"><span class="stat-label">NEXT</span><canvas id="next-canvas" width="100" height="100"></canvas></div>
+      <button id="btn-settings" class="icon-btn" type="button" aria-label="Settings" title="Settings">&#9881;&#65039;</button>
+    </header>
+
+    <div class="jar-holder" id="jar-holder">
+      <canvas id="game-canvas" aria-label="Fruit container"></canvas>
+      <div class="power-hint" id="power-hint" hidden role="status">
+        <span id="hint-text"></span>
+        <button id="hint-cancel" type="button">CANCEL</button>
+      </div>
+    </div>
+
+    <div class="powerbar">
+      <button id="btn-bomb" class="power-btn" type="button" aria-label="Bomb power-up">
+        <span class="pi">&#128163;</span><span class="pl">BOMB</span><b class="badge" id="bomb-count">3</b>
+      </button>
+      <button id="btn-shake" class="power-btn" type="button" aria-label="Shake power-up">
+        <span class="pi">&#128243;</span><span class="pl">SHAKE</span><b class="badge" id="shake-count">2</b>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===================== GAME OVER SCREEN ===================== -->
+  <section id="screen-gameover" class="screen" aria-label="Game over">
+    <div class="bg" id="bg-over"></div>
+    <div class="over-overlay" id="over-overlay"></div>
+    <div id="over-fruits" aria-hidden="true"></div>
+
+    <div class="over-panel">
+      <h2 class="over-title" id="over-title" aria-label="Game over"></h2>
+      <div class="over-scores">
+        <div class="over-row"><span>SCORE</span><b id="final-score">0</b></div>
+        <div class="over-row"><span>BEST</span><b id="final-best">0</b></div>
+        <div class="new-best" id="new-best" hidden>NEW BEST!</div>
+      </div>
+      <button id="btn-again" class="wood-btn" type="button">PLAY AGAIN</button>
+      <button id="btn-over-home" class="wood-btn alt" type="button">HOME</button>
+    </div>
+
+    <button class="icon-btn sound-btn corner" type="button" data-sound-toggle aria-label="Toggle sound">&#128266;</button>
+  </section>
+
+  <!-- ===================== SETTINGS / CONFIRM / TUTORIAL ===================== -->
+  <div id="modal-layer" class="modal-layer" hidden>
+    <div class="modal-backdrop"></div>
+
+    <div class="modal" id="modal-settings" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+      <h2 class="modal-title" id="settings-title">SETTINGS</h2>
+      <button id="set-sound" class="wood-btn menu-btn" type="button" aria-pressed="true"><span class="mi" id="set-sound-icon">&#128266;</span><span class="ml" id="set-sound-label">SOUND: ON</span></button>
+      <button id="set-home" class="wood-btn menu-btn" type="button"><span class="mi">&#127968;</span><span class="ml">HOME</span></button>
+      <button id="set-restart" class="wood-btn menu-btn" type="button"><span class="mi">&#128260;</span><span class="ml">RESTART</span></button>
+      <button id="set-tutorial" class="wood-btn menu-btn" type="button"><span class="mi">&#128214;</span><span class="ml">TUTORIAL</span></button>
+      <button id="set-close" class="wood-btn menu-btn alt" type="button"><span class="mi">&#10006;&#65039;</span><span class="ml">CLOSE</span></button>
+    </div>
+
+    <div class="modal small" id="modal-confirm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-msg" hidden>
+      <p class="confirm-msg" id="confirm-msg"></p>
+      <button id="confirm-yes" class="wood-btn menu-btn" type="button"><span class="ml" id="confirm-yes-label">YES</span></button>
+      <button id="confirm-no" class="wood-btn menu-btn alt" type="button"><span class="ml">CANCEL</span></button>
+    </div>
+
+    <div class="modal tutorial" id="modal-tutorial" role="dialog" aria-modal="true" aria-labelledby="tut-title" hidden>
+      <h2 class="modal-title" id="tut-title">HOW TO PLAY</h2>
+      <div class="tut-body" id="tut-body"></div>
+      <div class="tut-dots" id="tut-dots" aria-hidden="true"></div>
+      <div class="tut-nav">
+        <button id="tut-back" class="wood-btn small-btn" type="button">&#9664; BACK</button>
+        <button id="tut-next" class="wood-btn small-btn" type="button">NEXT &#9654;</button>
+      </div>
+      <button id="tut-close" class="wood-btn menu-btn alt" type="button"><span class="ml">GOT IT</span></button>
+    </div>
+  </div>
+
+<div id="jumpscare" hidden aria-hidden="true">
+  <video id="jumpscare-video" playsinline preload="auto"></video>
+  <div class="js-face">&#128561;</div>
+</div>
+
+  <!-- Fade overlay used for smooth screen transitions -->
+  <div id="transition"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
